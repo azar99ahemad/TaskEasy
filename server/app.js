@@ -4,7 +4,37 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors')
 
-const app = express();
+const debug = require('debug')('server:server');
+const http = require('http');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+
+dotenv.config();
+
+const app= express();
+
+const port = process.env.PORT ||3000;
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+const server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+mongoose.connect(process.env.MONGODB_URL).then(() => {
+  server.listen(port);
+  
+  console.log(`mongodb connected & port is running on ${process.env.port}`)
+}).catch(err => {
+  console.log(err);
+  process.exit(1);
+});
+
 
 app.use(cors())
 app.use(logger('dev'));
